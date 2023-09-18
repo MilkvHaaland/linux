@@ -853,3 +853,7 @@
 		};
 	};
 };
+
+&qspi1 {
+	status = "disabled";
+};
