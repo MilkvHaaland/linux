@@ -472,6 +472,10 @@
 	};
 };
 
+&gmac1 {
+	status = "disabled";
+};
+
 &emmc {
 	max-frequency = <198000000>;
 	non-removable;
