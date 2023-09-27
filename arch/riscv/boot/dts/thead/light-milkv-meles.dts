@@ -206,7 +206,7 @@
 				sound-dai = <&light_i2s 1>;
 			};
 			codec {
-				sound-dai = <&dummy_codec 2>;
+				sound-dai = <&dummy_codec>;
 			};
 		};
 	};
@@ -219,9 +219,10 @@
 	};
 
 	dummy_codec: dummy_codec {
-		#sound-dai-cells = <1>;
-		compatible = "linux,bt-sco";
+		#sound-dai-cells = <0>;
+		compatible = "thead,light-dummy-pcm";
 		status = "okay";
+		sound-name-prefix = "DUMMY";
 	};
 
 	vdd_5v: regulator-vdd-5v {
