@@ -110,13 +110,13 @@ static int jadard_prepare(struct drm_panel *panel)
 	if (ret)
 		return ret;
 
-	gpiod_set_value(jadard->reset, 1);
+	gpiod_set_value(jadard->reset, 0);
 	msleep(5);
 
-	gpiod_set_value(jadard->reset, 0);
-	msleep(10);
-
 	gpiod_set_value(jadard->reset, 1);
+	msleep(120);
+
+	gpiod_set_value(jadard->reset, 0);
 	msleep(120);
 
 	return 0;
@@ -805,6 +805,34 @@ static const struct jadard_panel_desc radxa_display_8hd_ad002_desc = {
 	.num_init_cmds = ARRAY_SIZE(radxa_display_8hd_ad002_init_cmds),
 };
 
+static const struct jadard_init_cmd radxa_display_10fhd_ad003_init_cmds[] = {
+
+};
+
+static const struct jadard_panel_desc radxa_display_10fhd_ad003_desc = {
+	.mode = {
+		.clock        = 160000,
+
+		.hdisplay    = 1200,
+		.hsync_start    = 1200 + 80,
+		.hsync_end    = 1200 + 80 + 60,
+		.htotal        = 1200 + 80 + 60 + 4,
+
+		.vdisplay    = 1920,
+		.vsync_start    = 1920 + 35,
+		.vsync_end    = 1920 + 35 + 25,
+		.vtotal        = 1920 + 35 + 25 + 4,
+
+		.width_mm    = 135,
+		.height_mm    = 217,
+		.type        = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+	},
+	.lanes = 4,
+	.format = MIPI_DSI_FMT_RGB888,
+	.init_cmds = radxa_display_10fhd_ad003_init_cmds,
+	.num_init_cmds = ARRAY_SIZE(radxa_display_10fhd_ad003_init_cmds),
+};
+
 static int jadard_dsi_probe(struct mipi_dsi_device *dsi)
 {
 	struct device *dev = &dsi->dev;
@@ -818,7 +846,7 @@ static int jadard_dsi_probe(struct mipi_dsi_device *dsi)
 
 	desc = of_device_get_match_data(dev);
 	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-			  MIPI_DSI_MODE_EOT_PACKET;
+			  MIPI_DSI_MODE_EOT_PACKET; // | MIPI_DSI_MODE_LPM;
 	dsi->format = desc->format;
 	dsi->lanes = desc->lanes;
 
@@ -874,6 +902,7 @@ static const struct of_device_id jadard_of_match[] = {
 	{ .compatible = "chongzhou,cz101b4001", .data = &cz101b4001_desc },
 	{ .compatible = "radxa,display-10hd-ad001", .data = &radxa_display_10hd_ad001_desc },
 	{ .compatible = "radxa,display-8hd-ad002", .data = &radxa_display_8hd_ad002_desc },
+	{ .compatible = "radxa,display-10fhd-ad003", .data = &radxa_display_10fhd_ad003_desc },
 	{ /* sentinel */ }
 };
 MODULE_DEVICE_TABLE(of, jadard_of_match);
